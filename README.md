@@ -15,10 +15,18 @@ No dependencies to install — the standard library is all you need:
 
 ```bash
 python3 run.py samples/policies.json
+python3 run.py samples/policies.json --coverage samples/coverage-config.json
 ```
 
 Exit codes: `2` = usage error or unreadable export, `1` = at least one
 high finding, `0` = no high findings.
+
+## Day-2 scope
+
+- Coverage analysis (`--coverage`): checks that every critical app
+  and user group in the config is protected by at least one enforced
+  MFA/block policy, and that break-glass accounts are excluded from
+  enforced policies so emergency access always works.
 
 ## Day-1 scope
 

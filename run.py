@@ -14,6 +14,7 @@ import sys
 
 from ca.loader import load_policies
 from ca.checks import check_policies
+from ca.coverage import load_config, check_coverage
 from ca.report import summarize, render_text, render_json
 
 
@@ -22,6 +23,8 @@ def main(argv=None):
     parser.add_argument("policies", help="policy export JSON file")
     parser.add_argument("--json", action="store_true",
                         help="emit findings as JSON")
+    parser.add_argument("--coverage",
+                        help="coverage config JSON file")
     args = parser.parse_args(argv)
 
     try:
@@ -31,6 +34,14 @@ def main(argv=None):
         return 2
 
     findings = check_policies(policies)
+
+    if args.coverage:
+        try:
+            config = load_config(args.coverage)
+        except (OSError, ValueError) as exc:
+            print(f"error: cannot load coverage config: {exc}", file=sys.stderr)
+            return 2
+        findings.extend(check_coverage(policies, config))
 
     if args.json:
         print(render_json(args.policies, findings))
